@@ -1,6 +1,7 @@
 package sixwords;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,16 +40,18 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         JMenu file = new JMenu("Файл");
         JMenuItem open = new JMenuItem("Открыть");
         JMenuItem save = new JMenuItem("Сохранить");
-        JMenuItem create = new JMenuItem("Новый проект");
+        JMenuItem saveAs = new JMenuItem("Сохранить как...");
         file.add(open);
         file.add(save);
-        file.add(create);
+        file.add(saveAs);
 
         open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 fileChooser.setDialogTitle("Выберите текстовый файл");
-                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
+                fileChooser.addChoosableFileFilter(filter);
                 fileChooser.showOpenDialog(SixWords.this);
             }
         });

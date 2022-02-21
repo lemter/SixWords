@@ -18,12 +18,14 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         jMenuBar.add(createAboutMenu());
         setJMenuBar(jMenuBar);
 
-        JPanel icon = new JPanel() {
-            public void paintComponent(Graphics g) {
-                g.drawImage(logoIcon.getImage(), 3, 4, this);
-            }
-        };
-        add(icon);
+        JPanel jPanel = new JPanel();
+
+        JTextArea jTextArea = new JTextArea();
+        jPanel.add(jTextArea);
+        jTextArea.setLineWrap(true);
+        jTextArea.setWrapStyleWord(true);
+
+        setContentPane(jPanel);
     }
 
     private JMenu createFileMenu() { // функция для создания пункта в меню

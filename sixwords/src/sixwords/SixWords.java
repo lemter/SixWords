@@ -19,6 +19,7 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         JPanel jPanel = new JPanel();
         jPanel.setLayout(new BorderLayout());
 
+
         JTextArea jTextArea = new JTextArea();
         jTextArea.setText("");
         jTextArea.setCaretPosition(0);

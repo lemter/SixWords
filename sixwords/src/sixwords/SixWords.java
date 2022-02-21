@@ -2,6 +2,8 @@ package sixwords;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class SixWords extends JFrame { // наследуем в классе JFrame
 
@@ -24,8 +26,17 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         jPanel.add(jTextArea);
         jTextArea.setLineWrap(true);
         jTextArea.setWrapStyleWord(true);
+        jTextArea.setSize(this.getSize());
+        jTextArea.setRows(getHeight() / 18);
 
         setContentPane(jPanel);
+
+        addComponentListener(new ComponentAdapter() {
+            public void componentResized(ComponentEvent evt) {
+                jTextArea.setSize(getSize());
+                jTextArea.setRows(getHeight() / 18);
+            }
+        });
     }
 
     private JMenu createFileMenu() { // функция для создания пункта в меню

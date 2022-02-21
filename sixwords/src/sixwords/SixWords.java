@@ -2,8 +2,12 @@ package sixwords;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SixWords extends JFrame { // наследуем в классе JFrame
+
+    private  JFileChooser fileChooser = new JFileChooser();
 
     public SixWords() { // инициализатор. здесь задаем первоначальные параметры окна приложения, после запуска
         // Создаем окно, задаем размер, центрируем на экране, добавляем верхнее меню
@@ -16,7 +20,7 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         jPanel.setLayout(new BorderLayout());
 
         JTextArea jTextArea = new JTextArea();
-        jTextArea.setText("TEXT");
+        jTextArea.setText("");
         jTextArea.setCaretPosition(0);
 
         JScrollPane jScrollPane = new JScrollPane(jTextArea);
@@ -38,6 +42,16 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         file.add(open);
         file.add(save);
         file.add(create);
+
+        open.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileChooser.setDialogTitle("Выберите текстовый файл");
+                fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                fileChooser.showOpenDialog(SixWords.this);
+            }
+        });
+
         return file;
     }
 
@@ -52,3 +66,4 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         new SixWords(); // запускаем инициализатор класса
     }
 }
+

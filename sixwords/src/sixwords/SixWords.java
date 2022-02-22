@@ -221,7 +221,6 @@ private JFileChooser fileChooser = new JFileChooser();
                 } catch (NullPointerException ex) {}; // ничего не делаем в случае ошибки
             }
         });
-
         return file;
     }
 

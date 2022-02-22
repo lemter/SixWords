@@ -5,10 +5,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class SixWords extends JFrame { // наследуем в классе JFrame
 
-    private  JFileChooser fileChooser = new JFileChooser();
+    private JFileChooser fileChooser = new JFileChooser();
+    private File current = null;
+    JTextArea jTextArea = new JTextArea();
 
     public SixWords() { // инициализатор. здесь задаем первоначальные параметры окна приложения, после запуска
         // Создаем окно, задаем размер, центрируем на экране, добавляем верхнее меню
@@ -20,8 +26,6 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         JPanel jPanel = new JPanel();
         jPanel.setLayout(new BorderLayout());
 
-
-        JTextArea jTextArea = new JTextArea();
         jTextArea.setText("");
         jTextArea.setCaretPosition(0);
 
@@ -45,14 +49,65 @@ public class SixWords extends JFrame { // наследуем в классе JFr
         file.add(save);
         file.add(saveAs);
 
-        open.addActionListener(new ActionListener() {
+        open.addActionListener(new ActionListener() { // cобытие нажатия на кнопку "открыть"
             @Override
             public void actionPerformed(ActionEvent e) {
                 fileChooser.setDialogTitle("Выберите текстовый файл");
                 fileChooser.setAcceptAllFileFilterUsed(false);
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
                 fileChooser.addChoosableFileFilter(filter);
-                fileChooser.showOpenDialog(SixWords.this);
+                fileChooser.showOpenDialog(SixWords.this); // выводим окно выбора файла
+
+                current = fileChooser.getSelectedFile();
+                jTextArea.setText("");
+
+                try(FileReader reader = new FileReader(current)) { // читаем посимвольно, вписываем в блокнот
+                    int c;
+                    while((c = reader.read()) != -1) {
+                        jTextArea.setText(jTextArea.getText() + ((char)c));
+                    }
+                }
+                catch(IOException ex) { // вывод диалогого окна, при возникновении ошибки при чтении
+                    JOptionPane.showMessageDialog(SixWords.this, ex.getMessage(), "File reading error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+
+        save.addActionListener(new ActionListener() { // cобытие нажатия на кнопку "сохранить"
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(current == null) {
+                    JOptionPane.showMessageDialog(SixWords.this, "Вы не выбрали никакой файл.", "File writing error", JOptionPane.WARNING_MESSAGE);
+                } else { // если выбранный файл имеется, делаем в него запись
+                    try(FileWriter writer = new FileWriter(current, false)) {
+                        writer.write(jTextArea.getText());
+                        writer.flush();
+                    }
+                    catch(IOException ex) {
+                        JOptionPane.showMessageDialog(SixWords.this, ex.getMessage(), "File writing error", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+            }
+        });
+
+        saveAs.addActionListener(new ActionListener() { // cобытие нажатия на кнопку "сохранить как"
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                fileChooser.setDialogTitle("Выберите текстовый файл");
+                fileChooser.setAcceptAllFileFilterUsed(false);
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Text files", "txt");
+                fileChooser.addChoosableFileFilter(filter);
+                fileChooser.showSaveDialog(SixWords.this); // выводим окно выбора файла
+
+                current = fileChooser.getSelectedFile();
+
+                try(FileWriter writer = new FileWriter(current, false)) {
+                    writer.write(jTextArea.getText());
+                    writer.flush();
+                }
+                catch(IOException ex) {
+                    JOptionPane.showMessageDialog(SixWords.this, ex.getMessage(), "File writing error", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 

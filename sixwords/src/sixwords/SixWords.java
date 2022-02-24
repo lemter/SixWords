@@ -11,15 +11,27 @@ import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
 
 public class SixWords extends JFrame { // наследуем в классе JFrame
 private JFileChooser fileChooser = new JFileChooser();
     private File current = null;
-    JTextArea jTextArea = new JTextArea();
+    private JTextArea jTextArea = new JTextArea();
+    static DataBase dataBase = new DataBase();
+    static Scanner in = new Scanner(System.in);
+    static int fontSize = 13;
+    private References references = new References();
+    private static String adress = "127.0.0.1";
 
     public SixWords() { // инициализатор. здесь задаем первоначальные параметры окна приложения, после запуска
         // Создаем окно, задаем размер, центрируем на экране, добавляем верхнее меню
@@ -141,6 +153,17 @@ private JFileChooser fileChooser = new JFileChooser();
             }
         });
 
+        jTextArea1.setText(Integer.toString(fontSize));
+        jTextArea.setFont(new Font(jTextArea.getFont().getName(), jTextArea.getFont().getStyle(), fontSize));
+
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                dataBase.request("insert into users (ip,fontSize) values ('" + adress + "', " + Integer.parseInt(jTextArea1.getText()) + "');");
+                dataBase.closeConnection();
+                System.exit(0);
+            }
+        });
+
         setVisible(true);
     }
 
@@ -228,10 +251,40 @@ private JFileChooser fileChooser = new JFileChooser();
         JMenu help = new JMenu("Помощь");
         JMenuItem reference = new JMenuItem("Справка");
         help.add(reference);
+
+        reference.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                references.show();
+            }
+        });
+
         return help;
     }
 
     public static void main(String args[]) {
+        dataBase.createConnection();
+
+        try {
+            InetAddress ip = InetAddress.getLocalHost();
+            adress = ip.getHostAddress();
+        } catch (UnknownHostException ex) {
+
+        }
+
+        ResultSet res = dataBase.request("select * from users where ip='" + adress + "'");
+        try {
+            while(res.next()) {
+                fontSize = res.getInt("fontSize");
+            }
+            in.next();
+        } catch (SQLException e) {
+            fontSize = 13;
+            in.next();
+        } catch (NullPointerException e) {
+            fontSize = 13;
+        }
+
         new SixWords(); // запускаем инициализатор класса
     }
 }
